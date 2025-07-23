@@ -1,1 +1,103 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>วิธีติดตั้ง Superset และ ClickHouse (macOS)</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1, h2 {
+      color: #2c3e50;
+    }
+    code {
+      background-color: #eee;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    pre {
+      background-color: #eee;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    section {
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+  <h1>วิธีการติดตั้งและใช้งาน Superset & ClickHouse บน macOS</h1>
+
+  <section>
+    <h2>a. วิธีการติดตั้งและเปิดใช้งาน ClickHouse</h2>
+    <p>1. ติดตั้ง ClickHouse Server และ Client ด้วย Homebrew:</p>
+    <pre><code>brew install clickhouse</code></pre>
+
+    <p>2. เริ่มต้น ClickHouse Server:</p>
+    <pre><code>clickhouse-server</code></pre>
+
+    <p>3. ในหน้าต่าง Terminal อื่น ลองเชื่อมต่อด้วย client:</p>
+    <pre><code>clickhouse-client</code></pre>
+  </section>
+
+  <section>
+    <h2>b. วิธีนำเข้าข้อมูลจากการบ้านที่ 4 (HW04)</h2>
+    <p>1. เตรียมไฟล์ CSV หรือไฟล์ข้อมูลจากการบ้านที่ 4</p>
+    <p>2. สร้างตารางใน ClickHouse:</p>
+    <pre><code>CREATE TABLE hw04_data (
+  id UInt32,
+  name String,
+  score Float32
+) ENGINE = MergeTree()
+ORDER BY id;</code></pre>
+
+    <p>3. นำเข้าไฟล์ (ตัวอย่าง CSV):</p>
+    <pre><code>clickhouse-client --query="INSERT INTO hw04_data FORMAT CSV" &lt; hw04.csv</code></pre>
+  </section>
+
+  <section>
+    <h2>c. วิธีติดตั้งและเปิดใช้งาน Apache Superset</h2>
+    <p>1. สร้าง virtual environment:</p>
+    <pre><code>python3 -m venv venv
+source venv/bin/activate</code></pre>
+
+    <p>2. อัปเกรด pip และติดตั้ง Superset:</p>
+    <pre><code>pip install --upgrade pip setuptools wheel
+pip install apache-superset</code></pre>
+
+    <p>3. ตั้งค่าระบบ Superset:</p>
+    <pre><code>superset db upgrade
+export FLASK_APP=superset
+superset fab create-admin  # สร้าง admin user
+superset init</code></pre>
+
+    <p>4. รัน Superset:</p>
+    <pre><code>superset run -p 8088 --with-threads --reload --debugger</code></pre>
+    <p>แล้วเปิด browser ที่ <a href="http://localhost:8088">http://localhost:8088</a></p>
+  </section>
+
+  <section>
+    <h2>d. วิธีเชื่อม Superset กับ ClickHouse</h2>
+    <p>1. ติดตั้งไดรเวอร์ ClickHouse:</p>
+    <pre><code>pip install clickhouse-connect</code></pre>
+
+    <p>2. ในหน้า Superset → ไปที่ <strong>Data → Databases → + Database</strong></p>
+
+    <p>3. กรอก URI สำหรับเชื่อมต่อ ClickHouse:</p>
+    <pre><code>clickhouse+http://default:@localhost:8123/default</code></pre>
+
+    <p>4. กด Test Connection → แล้วกด Save</p>
+    <p>คุณสามารถเลือกตารางและสร้าง Dashboard จากข้อมูลที่เชื่อมต่อได้เลย</p>
+  </section>
+
+  <p><em>หมายเหตุ: หากคุณใช้ ClickHouse ผ่าน Docker ก็สามารถปรับพอร์ต/URL ได้ตามที่คุณตั้งไว้</em></p>
+</body>
+</html>
 
