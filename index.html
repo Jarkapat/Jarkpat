@@ -51,15 +51,48 @@
     <h2>b. วิธีนำเข้าข้อมูลจากการบ้านที่ 4 (HW04)</h2>
     <p>1. เตรียมไฟล์ CSV หรือไฟล์ข้อมูลจากการบ้านที่ 4</p>
     <p>2. สร้างตารางใน ClickHouse:</p>
-    <pre><code>CREATE TABLE hw04_data (
-  id UInt32,
-  name String,
-  score Float32
-) ENGINE = MergeTree()
-ORDER BY id;</code></pre>
+    <pre><code>CREATE TABLE nypd_complaint_raw_all_string 
+      ( CMPLNT_NUM String, 
+      ADDR_PCT_CD String, 
+      BORO_NM String, 
+      CMPLNT_FR_DT String, 
+      CMPLNT_FR_TM String, 
+      CMPLNT_TO_DT String, 
+      CMPLNT_TO_TM String, 
+      CRM_ATPT_CPTD_CD String, 
+      HADEVELOPT String, 
+      HOUSING_PSA String, 
+      JURISDICTION_CODE String, 
+      JURIS_DESC String, 
+      KY_CD String, 
+      LAW_CAT_CD String, 
+      LOC_OF_OCCUR_DESC String, 
+      OFNS_DESC String, 
+      PARKS_NM String, 
+      PATROL_BORO String, 
+      PD_CD String, 
+      PD_DESC String, 
+      PREM_TYP_DESC String, 
+      RPT_DT String, 
+      STATION_NAME String, 
+      SUSP_AGE_GROUP String, 
+      SUSP_RACE String, 
+      SUSP_SEX String, 
+      TRANSIT_DISTRICT String, 
+      VIC_AGE_GROUP String, 
+      VIC_RACE String, 
+      VIC_SEX String, 
+      X_COORD_CD String, 
+      Y_COORD_CD String, 
+      Latitude String, 
+      Longitude String, 
+      Lat_Lon String, 
+      New Georeferenced Column String ) 
+      ENGINE = MergeTree 
+      ORDER BY CMPLNT_NUM;</code></pre>
 
     <p>3. นำเข้าไฟล์ (ตัวอย่าง CSV):</p>
-    <pre><code>clickhouse-client --query="INSERT INTO hw04_data FORMAT CSV" &lt; hw04.csv</code></pre>
+    <pre><code>clickhouse client --query="INSERT INTO nypd_complaint_raw_all_string FORMAT CSVWithNames" < ~/Downloads/NYPD_Complaint.csv</code></pre>
   </section>
 
   <section>
@@ -97,7 +130,48 @@ superset init</code></pre>
     <p>คุณสามารถเลือกตารางและสร้าง Dashboard จากข้อมูลที่เชื่อมต่อได้เลย</p>
   </section>
 
+  <section>
+    <h2>e. วิธีนำเสนอข้อมูลจากข้อ b. บน Dashboard ของ Superset</h2>
+    <p>1. เข้าไปที่ <strong>Data → Datasets → + Dataset</strong></p>
+    <ul>
+      <li>เลือก Database ที่เชื่อมไว้ (ClickHouse)</li>
+      <li>เลือกตาราง: <code>Web_analytics</code></li>
+      <p>เลือกใช้ข้อมูลที่สามารถ พลอตกราฟได้เนื่องจากข้อมูลเดิม clickhouse  ไม่รองรับ</p>
+      <li>ตั้งชื่อ Dataset แล้วกด Save</li>
+    </ul>
+
+    <p>2. สร้าง Visualization:</p>
+    <ul>
+      <li>ไปที่ <strong>Charts → + Chart</strong></li>
+      <li>เลือก Dataset: <code>Web_analytics</code></li>
+      <li>เลือก Visualization เช่น “Pie Chart”</li>
+      <li>ตั้งค่า: Dimension → <code>browser</code>, Metric → <code>COUNT(*)</code></li>
+      <li>กด Run → แล้ว Save</li>
+    </ul>
+
+    <p>3. สร้าง Dashboard:</p>
+    <ul>
+      <li>ไปที่ <strong>Dashboards → + Dashboard</strong></li>
+      <li>ตั้งชื่อ เช่น “HW04 Dashboard” แล้วกด Create</li>
+      <li>เพิ่ม Chart ที่สร้างไว้ลงใน Dashboard</li>
+    </ul>
+
+    <p><strong>ผลลัพธ์:</strong> จะได้ Dashboard แสดงกราฟแท่งรวมคะแนนของแต่ละคนจาก HW04</p>
+  </section>
+
+  <section>
+    <h2>f. บทสรุปการใช้งาน</h2>
+    <p>Superset เป็นเครื่องมือ BI ที่ทรงพลังและใช้งานฟรี สามารถแสดงผลข้อมูลจากหลายแหล่ง เช่น ClickHouse ได้อย่างสวยงามบน Dashboard</p>
+    <ul>
+      <li>ClickHouse ใช้งานง่ายและเร็วมากสำหรับการประมวลผลข้อมูลขนาดใหญ่</li>
+      <li>การบ้าน HW04 ที่เป็นข้อมูลเรียบง่ายสามารถแสดงผลเป็น Visualization ได้ภายในไม่กี่ขั้นตอน</li>
+      <li>Dashboard ที่ได้สามารถใช้วิเคราะห์และนำเสนอผลการเรียนรู้ได้อย่างชัดเจน</li>
+    </ul>
+    <p>เหมาะสำหรับนักศึกษา นักวิเคราะห์ และนักพัฒนาในการฝึกใช้เครื่องมือ Data Visualization จริง</p>
+  </section>
+
   <p><em>หมายเหตุ: หากคุณใช้ ClickHouse ผ่าน Docker ก็สามารถปรับพอร์ต/URL ได้ตามที่คุณตั้งไว้</em></p>
+  <img>
 </body>
 </html>
 
